@@ -12,6 +12,7 @@ public class ComponentHandler : MonoBehaviour
 
     List<ComponentHandler> _links = new List<ComponentHandler>();
 
+
     private void Start()
     {
         ComponentsManager.Instance.addComponent(this);
@@ -41,8 +42,12 @@ public class ComponentHandler : MonoBehaviour
         {
             Instantiate(GameManager.handlerPref, transform.position, Quaternion.identity, _connectionsContainer).GetComponent<LineHandler>().Add(this);
         }
-        else LineHandler.UnfinishedLink.Add(this);
+        else
+        {
+            LineHandler.UnfinishedLink.Add(this);
+        }
     }
+
 
     public bool isCompatible(ComponentHandler handler)
     {
@@ -72,6 +77,11 @@ public class ComponentHandler : MonoBehaviour
         }
 
         return false;
+    }
+
+    public List<ComponentHandler> getLinks()
+    {
+        return _links;
     }
 }
 

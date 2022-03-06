@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class LevelHandler : MonoBehaviour
 {
+    public static LevelHandler Instance { get; private set; }
+
     private Level currentLevel;
 
     private int currentConnections;
@@ -12,11 +14,24 @@ public class LevelHandler : MonoBehaviour
     private int[] componentsCount = new int[4];
 
     public static event EventHandler<OnCountChangeArgs> onCountChange;
-
+   
     public class OnCountChangeArgs: EventArgs
     {
         public int id;
         public int count;
+    }
+
+    private void Awake()
+    {
+        if(Instance != null)
+        {
+            Destroy(Instance);
+            return;
+        }
+
+        Instance = this;
+        
+        DontDestroyOnLoad(this);
     }
 
     public void LoadLevel(Level level)
@@ -28,6 +43,14 @@ public class LevelHandler : MonoBehaviour
         for(int i = 0; i < level.componentsCount.Length; i++)
         {
             updateCount(i, level.componentsCount[i]);
+        }
+
+        for (int i = 0; i < level.placedComponents.Length; i++)
+        {
+            int componentID = level.placedComponents[i].componentId;
+            Vector3 pos = level.placedComponents[i].position;
+
+            ComponentsManager.Instance.InstantiateComponent(componentID, pos);
         }
     }
 
@@ -46,4 +69,16 @@ public class LevelHandler : MonoBehaviour
     {
         return componentsCount[id];
     }
+
+    public bool leftComponents()
+    {
+        for(int i = 0; i < componentsCount.Length; i++)
+            if(componentsCount[i] != 0)
+            {
+                return true;
+            }
+
+        return false;
+    }
+
 }

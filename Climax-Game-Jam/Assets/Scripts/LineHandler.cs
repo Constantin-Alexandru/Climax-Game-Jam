@@ -54,7 +54,7 @@ public class LineHandler : MonoBehaviour
                 _lineRenderer.SetPositions(pos);
                 _end1.addLink(_end2);
                 _end2.addLink(_end1);
-                Destroy(this);
+                ComponentsManager.Instance.addConnection(this);
             }
             else Destroy(gameObject);
         }

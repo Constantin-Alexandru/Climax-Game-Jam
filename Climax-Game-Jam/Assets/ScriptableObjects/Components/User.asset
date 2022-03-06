@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: User
   id: 3
-  sprite: {fileID: 21300000, guid: a3d441a41f3d5094cb5b9808a38add5b, type: 3}
+  sprite: {fileID: 21300000, guid: 21dd258b98e7deb4db6ff13c7f71f8c6, type: 3}
   maxLinks: 1
   possibleLinks:
   - Proxy

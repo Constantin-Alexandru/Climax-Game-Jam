@@ -9,14 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07596a3451ba48745a6b8b90a24f5e2d, type: 3}
-  m_Name: Proxy
+  m_Script: {fileID: 11500000, guid: 0ed1124bc832481498d7395b7aefa69c, type: 3}
+  m_Name: Level2
   m_EditorClassIdentifier: 
-  type: Proxy
-  id: 2
-  sprite: {fileID: 21300000, guid: 1aa9551b004bd1349af01922152b36fb, type: 3}
-  maxLinks: 3
-  possibleLinks:
-  - Hub
-  - Server
-  - User
+  maxConnections: 2
+  componentsCount: 00000000000000000000000000000000
+  startConnections: 0
+  placedComponents:
+  - position: {x: 0, y: 0, z: 0}
+    componentId: 0

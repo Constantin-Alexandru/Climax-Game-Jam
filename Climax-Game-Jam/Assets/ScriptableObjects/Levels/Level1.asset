@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed1124bc832481498d7395b7aefa69c, type: 3}
   m_Name: Level1
   m_EditorClassIdentifier: 
-  maxConnections: 4
-  componentsCount: 00000000000000000200000000000000
+  maxConnections: 2
+  componentsCount: 00000000000000000100000000000000
   startConnections: 0
+  placedComponents:
+  - position: {x: 0, y: 0, z: 0}
+    componentId: 0
+  - position: {x: -10, y: 0, z: 0}
+    componentId: 3

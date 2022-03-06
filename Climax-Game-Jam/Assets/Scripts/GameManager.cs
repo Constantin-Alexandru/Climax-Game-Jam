@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,12 +14,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject _handler;
     [SerializeField] GameObject _component;
     [SerializeField] GameObject _ghostObj;
-    [SerializeField] GameObject _connectionsContainer;
 
-    [SerializeField] LevelHandler _levelHandler;
     [SerializeField] Level[] _levels;
 
     [SerializeField] int level;
+
+    public class OnRunResponseArgs : EventArgs
+    {
+        public string message;
+    }
+
+    public static event EventHandler<OnRunResponseArgs> onRunResponse;
+    public static event EventHandler onNewLevel;
 
     private void Awake()
     {
@@ -29,7 +37,6 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         handlerPref = _handler;
-        DontDestroyOnLoad(this);
     }
 
     private void Start()
@@ -37,46 +44,119 @@ public class GameManager : MonoBehaviour
         setLevel(0);
     }
 
+    public void nextLevel()
+    {
+        level++;
+
+        if (level >= _levels.Length)
+            level = _levels.Length - 1;
+
+        onNewLevel?.Invoke(this, EventArgs.Empty);
+
+        setLevel(level);
+    }
+
     public void setLevel(int level)
     {
         this.level = level;
-        _levelHandler.LoadLevel(_levels[level]);
+
+        ComponentsManager.Instance.deleteAllComponents();
+        ComponentsManager.Instance.deleteAllConnections();
+
+        LevelHandler.Instance.LoadLevel(_levels[level]);
 
     }
 
     public void instantiateGhost(int componentID)
     {
         
-        //if (_levelHandler.getComponentsCount(componentID) > 0)
-        //{
+        if (LevelHandler.Instance.getComponentsCount(componentID) > 0)
+        {
             Component component = ComponentsManager.Instance.getComponent(componentID);
             Instantiate(_ghostObj, Vector3.zero, Quaternion.identity).GetComponent<ComponentHandler>().setComponent(component);
-        //}
+        }
     }
 
     public void subtractCount(int id)
     {
-        _levelHandler.subtractCount(id);
+        LevelHandler.Instance.subtractCount(id);
     }
 
     private void Update()
     {
-        if(Input.GetKeyUp(KeyCode.Alpha1))
+        
+    }
+
+    public void TestNetwork()
+    {
+        ComponentHandler hub = ComponentsManager.Instance.getHub();
+
+        List<ComponentHandler> visitedHandlers = new List<ComponentHandler> { hub };
+
+        int index = 0;
+        int connections = 0;
+
+        List<ComponentHandler> toVisitHandlers = new List<ComponentHandler> { hub };
+
+        if(hub != null)
         {
-                instantiateGhost(0);    
-        }
-        else if (Input.GetKeyUp(KeyCode.Alpha2))
-        {
-                instantiateGhost(1);    
-        }
-        else if (Input.GetKeyUp(KeyCode.Alpha3))
-        {
-                instantiateGhost(2);
-        }
-        else if (Input.GetKeyUp(KeyCode.Alpha4))
-        {
-                instantiateGhost(3);
+            while (index < toVisitHandlers.Count)
+            {
+
+                List<ComponentHandler> links = toVisitHandlers[index].getLinks();
+
+                connections += links.Count;
+
+                visitedHandlers.Add(toVisitHandlers[index]);
+
+                foreach (ComponentHandler link in links)
+                {
+                        if (!toVisitHandlers.Contains(link))
+                            toVisitHandlers.Add(link);
+                }
+
+                index++;
+            }
         }
 
+        if(toVisitHandlers.Count == ComponentsManager.Instance.getComponents().Count)
+        {
+            if (connections / 2 <= _levels[level].maxConnections)
+            {
+                if (!LevelHandler.Instance.leftComponents())
+                {
+                    StartCoroutine(printResponse("CORRECT!"));
+                }
+                else
+                {
+                    StartCoroutine(printResponse("Not every component has been used" ));
+                }
+            }
+            else
+            {
+                StartCoroutine(printResponse("The connections count surpassed the maximum number of connections allowed"));
+            }
+        }
+        else
+        {
+            StartCoroutine(printResponse("The connections don't reach all devices"));
+        }
     }
+
+    IEnumerator printResponse(string message)
+    {
+        onRunResponse?.Invoke(this, new OnRunResponseArgs { message = message });
+
+        yield return new WaitForSeconds(5);
+
+        onRunResponse?.Invoke(this, new OnRunResponseArgs { message = " " });
+
+    }
+
+    private void OnDestroy()
+    {
+        Instance = null;
+    }
+
 }
+

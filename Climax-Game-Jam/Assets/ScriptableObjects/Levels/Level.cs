@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,4 +11,13 @@ public class Level : ScriptableObject
     public int[] componentsCount = new int[4];
 
     public int startConnections;
+
+    [Serializable]
+    public class PlacedComponent
+    {
+        public Vector3 position;
+        public int componentId;
+    }
+
+    public PlacedComponent[] placedComponents;
 }

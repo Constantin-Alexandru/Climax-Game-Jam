@@ -10,10 +10,36 @@ public class UIManager : MonoBehaviour
     [SerializeField] Button proxyBtn;
     [SerializeField] TextMeshProUGUI serverBtnText;
     [SerializeField] TextMeshProUGUI proxyBtnText;
+    [SerializeField] TextMeshProUGUI messageText;
+    [SerializeField] TextMeshProUGUI connectionsText;
 
-    private void Start()
+    [Space]
+
+    [SerializeField] Canvas inGame;
+    [SerializeField] Canvas winState;
+
+    private void Awake()
     {
         LevelHandler.onCountChange += LevelHandler_onCountChange;
+        GameManager.onRunResponse += GameManager_onRunResponse;
+        GameManager.onNewLevel += GameManager_onNewLevel;
+    }
+
+    private void GameManager_onNewLevel(object sender, System.EventArgs e)
+    {
+        inGame.gameObject.SetActive(true);
+        winState.gameObject.SetActive(false);
+    }
+
+    private void GameManager_onRunResponse(object sender, GameManager.OnRunResponseArgs e)
+    {
+        messageText.text = e.message;
+
+        if(e.message == "CORRECT!")
+        {
+            inGame.gameObject.SetActive(false);
+            winState.gameObject.SetActive(true);
+        }
     }
 
     private void LevelHandler_onCountChange(object sender, LevelHandler.OnCountChangeArgs e)
@@ -49,5 +75,6 @@ public class UIManager : MonoBehaviour
     private void OnDestroy()
     {
         LevelHandler.onCountChange -= LevelHandler_onCountChange;
+        GameManager.onRunResponse -= GameManager_onRunResponse;
     }
 }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Server
   id: 1
-  sprite: {fileID: 21300000, guid: 46157de4c06399c4780d64bec3b98bbe, type: 3}
+  sprite: {fileID: 21300000, guid: 82ec26ac27402f04498a6640ad9a55d9, type: 3}
   maxLinks: 5
   possibleLinks:
   - Hub
