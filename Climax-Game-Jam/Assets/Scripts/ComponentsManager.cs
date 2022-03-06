@@ -16,16 +16,34 @@ public class ComponentsManager : MonoBehaviour
         public int maxConnections;
     }
 
-    public event EventHandler onConnectionAdded;
+    public static event EventHandler<OnConnectionAddedArgs> onConnectionAdded;
 
     List<ComponentHandler> componentHandlers = new List<ComponentHandler>();
     List<LineHandler> connections = new List<LineHandler>();
 
     public static ComponentsManager Instance { get; private set; }
 
+    private void Start()
+    {
+        updateGraphics();
+
+        GameManager.onNewLevel += GameManager_onNewLevel;
+    }
+
+    private void GameManager_onNewLevel(object sender, EventArgs e)
+    {
+        updateGraphics();
+    }
+
+    private void updateGraphics()
+    {
+        onConnectionAdded?.Invoke(this, new OnConnectionAddedArgs { currentConnections = connections.Count, maxConnections = GameManager.Instance.getMaxConnections() });
+    }
+
     public void addConnection(LineHandler connection)
     {
         connections.Add(connection);
+        onConnectionAdded?.Invoke(this, new OnConnectionAddedArgs { currentConnections = connections.Count, maxConnections = GameManager.Instance.getMaxConnections()});
     }
     public void removeConnection(LineHandler connection)
     {
@@ -102,5 +120,10 @@ public class ComponentsManager : MonoBehaviour
             if (handler.getType() == "Hub")
                 return handler;
         return null;
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.onNewLevel -= GameManager_onNewLevel;
     }
 }

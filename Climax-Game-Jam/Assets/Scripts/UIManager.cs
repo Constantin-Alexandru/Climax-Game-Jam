@@ -23,6 +23,13 @@ public class UIManager : MonoBehaviour
         LevelHandler.onCountChange += LevelHandler_onCountChange;
         GameManager.onRunResponse += GameManager_onRunResponse;
         GameManager.onNewLevel += GameManager_onNewLevel;
+
+        ComponentsManager.onConnectionAdded += ComponentsManager_onConnectionAdded;
+    }
+
+    private void ComponentsManager_onConnectionAdded(object sender, ComponentsManager.OnConnectionAddedArgs e)
+    {
+        connectionsText.text = "Connections: " + e.currentConnections + "/" + e.maxConnections;
     }
 
     private void GameManager_onNewLevel(object sender, System.EventArgs e)
@@ -76,5 +83,8 @@ public class UIManager : MonoBehaviour
     {
         LevelHandler.onCountChange -= LevelHandler_onCountChange;
         GameManager.onRunResponse -= GameManager_onRunResponse;
+        GameManager.onNewLevel -= GameManager_onNewLevel;
+
+        ComponentsManager.onConnectionAdded -= ComponentsManager_onConnectionAdded;
     }
 }

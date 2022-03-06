@@ -51,9 +51,8 @@ public class GameManager : MonoBehaviour
         if (level >= _levels.Length)
             level = _levels.Length - 1;
 
-        onNewLevel?.Invoke(this, EventArgs.Empty);
-
         setLevel(level);
+
     }
 
     public void setLevel(int level)
@@ -62,6 +61,7 @@ public class GameManager : MonoBehaviour
 
         ComponentsManager.Instance.deleteAllComponents();
         ComponentsManager.Instance.deleteAllConnections();
+        onNewLevel?.Invoke(this, EventArgs.Empty);
 
         LevelHandler.Instance.LoadLevel(_levels[level]);
 
@@ -143,11 +143,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public int getMaxConnections()
+    {
+        return _levels[level].maxConnections;
+    }
+
     IEnumerator printResponse(string message)
     {
         onRunResponse?.Invoke(this, new OnRunResponseArgs { message = message });
 
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(2);
 
         onRunResponse?.Invoke(this, new OnRunResponseArgs { message = " " });
 
